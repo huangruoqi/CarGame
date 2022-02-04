@@ -1,4 +1,4 @@
-import { View } from 'react-native'
+import { Button, View } from 'react-native'
 import * as React from 'react'
 import { GLView } from "expo-gl";
 import { Renderer, TextureLoader } from "expo-three";
@@ -24,6 +24,7 @@ import Obstacle from './GameObjects/Obstacle.js';
 
 export default function App() {
   let timeout;
+	const [lane, setLane] = React.useState({value: 0})
 
   useEffect(() => {
     // Clear the animation loop when the component unmounts
@@ -31,12 +32,9 @@ export default function App() {
   }, []);
 
   const onContextCreate = async (gl) => {
+    // Create a WebGLRenderer without a DOM element
     const { drawingBufferWidth: width, drawingBufferHeight: height } = gl;
     const sceneColor = 0x6ad6f0;
-
-		
-
-    // Create a WebGLRenderer without a DOM element
     const renderer = new Renderer({ gl });
     renderer.setSize(width, height);
     renderer.setClearColor(sceneColor);
@@ -44,19 +42,12 @@ export default function App() {
 		renderer.shadowMap.type = PCFSoftShadowMap;
     const camera = new PerspectiveCamera(70, width / height, 0.01, 1000);
     camera.position.set(0, 3.7,3.7);
-
+    camera.lookAt(0,0,0);
     const scene = new Scene();
-		let o1,o2;
-		async function loadGLB() {
-			o1 = new Obstacle('Tree', scene, [1,0,-7]);
-			o2 = new Obstacle('Tree', scene, [-1,0,-4]);
-			new Car('car', scene);
-		}
-		loadGLB();
-		
+
+		// lighting
     const ambientLight = new AmbientLight(0x101010);
     scene.add(ambientLight);
-
     let dLight = new DirectionalLight(0xffffff, 1);
 		dLight.position.x += 0;
 		dLight.position.y += 10;
@@ -65,44 +56,32 @@ export default function App() {
 		dLight.shadow.mapSize.width = 2048
 		dLight.shadow.mapSize.height = 2048
 		dLight.shadow.bias = -0.000035
-
-	
+		dLight.lookAt(0,0,0);
     scene.add(dLight);
 
-    
-
+		// floor initialization
     const cube = new IconMesh();
     scene.add(cube);
 		cube.position.set(0,-0.5,0);
 		cube.receiveShadow = true;
 
-    camera.lookAt(cube.position);
-		dLight.lookAt(cube.position);
+		// car and tree
+		const o1  = new Obstacle('Tree', scene, [1,0,-7]);
+		const	o2  = new Obstacle('Tree', scene, [-1,0,-4]);
+		const car = new Car('car', scene);
 
-    function update() {
-			const tree1 = o1.obj;
-			const tree2 = o2.obj;
-			if (tree1) {
-				tree1.position.z+=0.08;
-				if (tree1.position.z > 7) {
-					tree1.position.z = -7;
-					tree1.rotation.y = Math.PI * 2 * Math.random();
-				}
-			}
-
-			if (tree2) {
-				tree2.position.z+=0.08;
-				if (tree2.position.z > 7) {
-					tree2.position.z = -7;
-					tree2.rotation.y = Math.PI * 2 * Math.random();
-				}
-			}
+		// game logic here
+    function update(dt) {
+			o1.update(dt);
+			o2.update(dt);
+			if (car.obj && lane) car.obj.position.x = lane.value / 1.5
     }
 
     // Setup an animation loop
     const render = () => {
       timeout = requestAnimationFrame(render);
-      update();
+			const dt = 0;
+      update(dt);
       renderer.render(scene, camera);
       gl.endFrameEXP();
     };
@@ -112,6 +91,10 @@ export default function App() {
   return (
 		<View style={{ flex: 1 }} >
 			<GLView style={{ flex: 1 }} onContextCreate={onContextCreate} />
+			<View style={{flexDirection: 'row', justifyContent: 'space-around', padding: 20}}>
+				<Button title="left" onPress={() => {if (lane.value>-1) lane.value = lane.value - 1}} />
+				<Button title="right" onPress={() => {if (lane.value<1) lane.value = lane.value + 1}} />
+			</View>
 		</View>
 	); 
 }

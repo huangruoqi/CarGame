@@ -39,4 +39,15 @@ export default class Obstacle {
 				scene.add(obj);
 			})
 	}
+
+	update(dt) {
+		const oo = this.obj;
+		if (oo) {
+			oo.position.z+=0.08;
+			if (oo.position.z > 7) {
+				oo.position.z = -7;
+				oo.rotation.y = Math.PI * 2 * Math.random();
+			}
+		}
+	}
 }

@@ -15,7 +15,7 @@ export default class Car {
 		loader.load(car.localUri, (gltf) => {
 			const obj = gltf.scene;
 			obj.position.set(0,0.7,2);
-			obj.scale.setScalar(0.35);
+			obj.scale.setScalar(0.3);
 			obj.traverse(t => {
 				if (t.isMesh){
 					t.receiveShadow = true;
