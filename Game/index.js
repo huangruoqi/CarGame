@@ -68,12 +68,21 @@ export default function App() {
 		// car and tree
 		const o1  = new Obstacle('Tree', scene, [1,0,-7]);
 		const	o2  = new Obstacle('Tree', scene, [-1,0,-4]);
+		const obstacles = [o1, o2]
 		const car = new Car('car', scene);
 
 		// game logic here
     function update(dt) {
-			o1.update(dt);
-			o2.update(dt);
+			for (let i = obstacles.length - 1; i >= 0; i--) {
+				if (obstacles[i].update(dt)) {
+					scene.remove(obstacles[i].obj)
+					obstacles.splice(i, 1);
+				};
+			}
+			if (obstacles.length < 3) {
+				const new_o = new Obstacle('Tree', scene, [Math.floor(Math.random()*3-1),0,-7])
+				obstacles.push(new_o)
+			}
 			if (car.obj && lane) car.obj.position.x = lane.value / 1.5
     }
 

@@ -44,10 +44,10 @@ export default class Obstacle {
 		const oo = this.obj;
 		if (oo) {
 			oo.position.z+=0.08;
-			if (oo.position.z > 7) {
-				oo.position.z = -7;
-				oo.rotation.y = Math.PI * 2 * Math.random();
-			}
 		}
+		else {
+			return false;
+		}
+		return oo.position.z>7;
 	}
 }
