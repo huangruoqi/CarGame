@@ -27,8 +27,8 @@ export default class Road {
 		const loader = new GLTFLoader();
 		loader.load(car.localUri, (gltf) => {
 			const obj = gltf.scene;
-			obj.position.set(0,0.7,2);
-			obj.scale.setScalar(0.35);
+			obj.position.set(0,0,0);
+			obj.scale.setScalar(0.5);
 			obj.traverse(t => {
 				if (t.isMesh){
 					t.receiveShadow = true;
