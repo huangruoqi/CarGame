@@ -22,16 +22,17 @@ export default class Road {
 	}
 	
 	async load(scene){
-		const car = Asset.fromModule(require(`../../assets/Game/road.glb`))
+		const car = Asset.fromModule(require(`../../assets/Game/Road.glb`))
 		await car.downloadAsync();
 		const loader = new GLTFLoader();
 		loader.load(car.localUri, (gltf) => {
 			const obj = gltf.scene;
-			obj.position.set(0,0,0);
-			// obj.scale.setScalar(0.35);
+			obj.position.set(0,0.7,2);
+			obj.scale.setScalar(0.35);
 			obj.traverse(t => {
 				if (t.isMesh){
 					t.receiveShadow = true;
+					t.castShadow = true;
 				}
 			})
 			this.obj = obj;

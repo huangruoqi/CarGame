@@ -21,7 +21,6 @@ import {
 } from "three";
 import Car from './GameObjects/Car.js'
 import Obstacle from './GameObjects/Obstacle.js';
-import Road from './GameObjects/Road.js'
 
 export default function App() {
   let timeout;
@@ -61,11 +60,10 @@ export default function App() {
     scene.add(dLight);
 
 		// floor initialization
-    // const cube = new IconMesh();
-    // scene.add(cube);
-		// cube.position.set(0,-0.5,0);
-		// cube.receiveShadow = true;
-    const road = new Road('pavement', scene)
+    const cube = new IconMesh();
+    scene.add(cube);
+		cube.position.set(0,-0.5,0);
+		cube.receiveShadow = true;
 
 		// car and tree
 		const o1  = new Obstacle('Tree', scene, [1,0,-7]);
