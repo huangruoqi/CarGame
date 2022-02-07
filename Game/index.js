@@ -21,6 +21,7 @@ import {
 } from "three";
 import Car from './GameObjects/Car.js'
 import Obstacle from './GameObjects/Obstacle.js';
+import Road from './GameObjects/Road.js'
 
 export default function App() {
   let timeout;
