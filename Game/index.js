@@ -71,7 +71,7 @@ export default function App() {
 		// const o1  = new Obstacle('Tree', scene, [1,0,-7]);
 		// const	o2  = new Obstacle('Tree', scene, [-1,0,-4]);
 		// const obstacles = [o1, o2]
-		// const car = new Car('car', scene);
+		const car = new Car('car', scene);
 
 		// game logic here
     function update(dt) {
@@ -85,7 +85,7 @@ export default function App() {
 			// 	const new_o = new Obstacle('Tree', scene, [Math.floor(Math.random()*3-1),0,-7])
 			// 	obstacles.push(new_o)
 			// }
-			// if (car.obj && lane) car.obj.position.x = lane.value * 1.5
+			if (car.obj && lane) car.obj.position.x = lane.value * 1.5
     }
 
     // Setup an animation loop
