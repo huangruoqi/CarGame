@@ -54,15 +54,19 @@ export default function App() {
     const ambientLight = new AmbientLight(0x101010);
     scene.add(ambientLight);
     let dLight = new DirectionalLight(0xffffff, 1);
-		dLight.position.x += 0;
+		dLight.position.x += 20;
 		dLight.position.y += 10;
-		dLight.position.z += 20;
+		dLight.position.z += -10;
 		dLight.castShadow=true;
 		dLight.shadow.mapSize.width = 2048
 		dLight.shadow.mapSize.height = 2048
 		dLight.shadow.bias = -0.000035
 		dLight.lookAt(0,0,0);
     scene.add(dLight);
+
+		const plight = new PointLight(0xffffff, 0.5);
+		plight.position.set(0,20,0);
+		scene.add(plight);
 
 		// floor initialization
     const road = new Road('pavement', scene)
