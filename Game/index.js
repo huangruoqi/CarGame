@@ -88,7 +88,7 @@ export default function App() {
 				};
 			}
 			if (obstacles.length < 3) {
-				const new_o = new Obstacle('Tree', scene, [Math.floor(Math.random()*3-1),0,-30])
+				const new_o = new Obstacle('Tree', scene, [1.5*Math.floor(Math.random()*3-1),0,-30])
 				obstacles.push(new_o)
 			}
 			if (car.obj && carX) car.obj.position.x = carX.value * 1.5

@@ -23,99 +23,32 @@ export default class Road {
 	}
 	
 	async load(scene){
+		const roads = [];
 		const road = Asset.fromModule(require(`../../assets/Game/Road.glb`))
 		await road.downloadAsync();
-		loadGLTF(road).then(gltf => {
+		for(let i = 0; i < 10; i++){
+			const gltf = await loadGLTF(road);
 			const obj = gltf.scene;
-			obj.position.set(0,0,2);
+			obj.position.set(0,0,2-i*5);
 			obj.traverse(t => {
 				if (t.isMesh){
 					t.receiveShadow = true;
 					t.castShadow = true;
 				}
 			})
-			this.objs.push(obj);
-			scene.add(obj)
-		})
-		loadGLTF(road).then(gltf => {
-			const obj = gltf.scene;
-			obj.position.set(0,0,-3);
-			obj.traverse(t => {
-				if (t.isMesh){
-					t.receiveShadow = true;
-					t.castShadow = true;
-				}
-			})
-			this.objs.push(obj);
-			scene.add(obj)
-		})
-		loadGLTF(road).then(gltf => {
-			const obj = gltf.scene;
-			obj.position.set(0,0,-8);
-			obj.traverse(t => {
-				if (t.isMesh){
-					t.receiveShadow = true;
-					t.castShadow = true;
-				}
-			})
-			this.objs.push(obj)
-			scene.add(obj)
-		})
-		loadGLTF(road).then(gltf => {
-			const obj = gltf.scene;
-			obj.position.set(0,0,-13);
-			obj.traverse(t => {
-				if (t.isMesh){
-					t.receiveShadow = true;
-					t.castShadow = true;
-				}
-			})
-			this.objs.push(obj)
-			scene.add(obj)
-		})
-		loadGLTF(road).then(gltf => {
-			const obj = gltf.scene;
-			obj.position.set(0,0,-18);
-			obj.traverse(t => {
-				if (t.isMesh){
-					t.receiveShadow = true;
-					t.castShadow = true;
-				}
-			})
-			this.objs.push(obj)
-			scene.add(obj)
-		})
-		loadGLTF(road).then(gltf => {
-			const obj = gltf.scene;
-			obj.position.set(0,0,-23);
-			obj.traverse(t => {
-				if (t.isMesh){
-					t.receiveShadow = true;
-					t.castShadow = true;
-				}
-			})
-			this.objs.push(obj)
-			scene.add(obj)
-		})
-		loadGLTF(road).then(gltf => {
-			const obj = gltf.scene;
-			obj.position.set(0,0,-28);
-			obj.traverse(t => {
-				if (t.isMesh){
-					t.receiveShadow = true;
-					t.castShadow = true;
-				}
-			})
-			this.objs.push(obj)
-			scene.add(obj)
-		})
+			roads.push(obj);
+		}
+		for(let i = 0 ; i <10 ; i++){
+			this.objs.push(roads[i]);
+			scene.add(roads[i])
+		}
 	}
 
 	update(dt) {
 		this.objs.forEach(obj => {
 			obj.position.z += 8*dt
 			if (obj.position.z > 8)
-				obj.position.z -= 35;
+				obj.position.z -= 40;
 		})
 	}
 }
