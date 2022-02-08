@@ -93,6 +93,7 @@ export default function App() {
 			}
 			if (car.obj && carX) car.obj.position.x = carX.value * 1.5
 			road.update(dt);
+			car.collision(obstacles);
     }
 
     // Setup an animation loop
