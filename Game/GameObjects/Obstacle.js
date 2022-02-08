@@ -44,7 +44,7 @@ export default class Obstacle {
 	update(dt) {
 		const oo = this.obj;
 		if (oo) {
-			oo.position.z+=0.08;
+			oo.position.z+=8*dt;
 		}
 		else {
 			return false;

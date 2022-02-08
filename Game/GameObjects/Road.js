@@ -85,9 +85,37 @@ export default class Road {
 			this.objs.push(obj)
 			scene.add(obj)
 		})
+		loadGLTF(road).then(gltf => {
+			const obj = gltf.scene;
+			obj.position.set(0,0,-23);
+			obj.traverse(t => {
+				if (t.isMesh){
+					t.receiveShadow = true;
+					t.castShadow = true;
+				}
+			})
+			this.objs.push(obj)
+			scene.add(obj)
+		})
+		loadGLTF(road).then(gltf => {
+			const obj = gltf.scene;
+			obj.position.set(0,0,-28);
+			obj.traverse(t => {
+				if (t.isMesh){
+					t.receiveShadow = true;
+					t.castShadow = true;
+				}
+			})
+			this.objs.push(obj)
+			scene.add(obj)
+		})
 	}
 
 	update(dt) {
-		this.objs.forEach(obj => obj.position.z += 0.08)
+		this.objs.forEach(obj => {
+			obj.position.z += 8*dt
+			if (obj.position.z > 8)
+				obj.position.z -= 35;
+		})
 	}
 }

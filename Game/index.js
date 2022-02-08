@@ -14,7 +14,8 @@ import {
   Scene,
   SpotLight,
 	PCFSoftShadowMap,
-	DirectionalLight
+	DirectionalLight,
+	Clock
 } from "three";
 import Car from './GameObjects/Car.js'
 import Obstacle from './GameObjects/Obstacle.js';
@@ -30,6 +31,7 @@ export default function App() {
 	// const [lane, setLane] = React.useState({value: 0})
 	const lane = useSharedValue(0)
 	const carX = useSharedValue(0)
+	const clock = new Clock();
 
   useEffect(() => {
     // Clear the animation loop when the component unmounts
@@ -86,7 +88,7 @@ export default function App() {
 				};
 			}
 			if (obstacles.length < 3) {
-				const new_o = new Obstacle('Tree', scene, [Math.floor(Math.random()*3-1),0,-7])
+				const new_o = new Obstacle('Tree', scene, [Math.floor(Math.random()*3-1),0,-30])
 				obstacles.push(new_o)
 			}
 			if (car.obj && carX) car.obj.position.x = carX.value * 1.5
@@ -94,9 +96,9 @@ export default function App() {
     }
 
     // Setup an animation loop
-    const render = () => {
+    const render = (now) => {
       timeout = requestAnimationFrame(render);
-			const dt = 0;
+			const dt = clock.getDelta();
       update(dt);
       renderer.render(scene, camera);
       gl.endFrameEXP();
