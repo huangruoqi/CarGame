@@ -31,6 +31,7 @@ export default function App() {
 	// const [lane, setLane] = React.useState({value: 0})
 	const lane = useSharedValue(0)
 	const carX = useSharedValue(0)
+	const carR = useSharedValue(0)
 	const clock = new Clock();
 
   useEffect(() => {
@@ -92,6 +93,7 @@ export default function App() {
 				obstacles.push(new_o)
 			}
 			if (car.obj && carX) car.obj.position.x = carX.value * 1.5
+			if (car.obj) car.obj.rotation.y = carR.value * Math.PI / 9;
 			road.update(dt);
 			if (car.collision(obstacles)) {
 				restart();
@@ -134,11 +136,13 @@ export default function App() {
 				// carX.value = withTiming(lane.value - 1, {duration: 500*(1-lane.value+carX.value)});
 				carX.value = withSpring(lane.value - 1)
 				lane.value = lane.value - 1;
+				carR.value = withTiming(1, {duration:200}, () => carR.value = withTiming(0, {duration:200}))
 			}
 			else if (e.nativeEvent.pageX>pressX.value&&lane.value<1){
 				// carX.value = withTiming(lane.value + 1, {duration: 500*(1+lane.value-carX.value)});
 				carX.value = withSpring(lane.value + 1)
 				lane.value = lane.value + 1;
+				carR.value = withTiming(-1, {duration:200}, () => carR.value = withTiming(0, {duration:200}))
 			}
 		}}
 		>
