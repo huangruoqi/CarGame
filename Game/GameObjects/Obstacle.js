@@ -29,7 +29,7 @@ export default class Obstacle {
 		loadGLTF(asset).then( gltf => {
 				const obj = gltf.scene;
 				obj.position.set(p[0], p[1], p[2]);
-				obj.scale.setScalar(1);
+				obj.rotation.y = Math.random()*2*Math.PI
 				obj.traverse(t => {
 					if (t.isMesh){
 						t.receiveShadow = true;
