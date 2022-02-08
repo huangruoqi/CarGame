@@ -13,6 +13,7 @@ import {
 	PCFSoftShadowMap,
 	DirectionalLight
 } from "three";
+import loadGLTF from "../utils";
 
 export default class Obstacle {
 	constructor(name, scene, p) {
@@ -25,7 +26,7 @@ export default class Obstacle {
 		const asset = Asset.fromModule(require(`../../assets/Game/Tree00.glb`))
 		await asset.downloadAsync();
 		const loader = new GLTFLoader();
-		loader.load(asset.localUri, (gltf) => {
+		loadGLTF(asset).then( gltf => {
 				const obj = gltf.scene;
 				obj.position.set(p[0], p[1], p[2]);
 				obj.scale.setScalar(1);

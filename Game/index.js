@@ -1,10 +1,7 @@
-import { Button, View } from 'react-native'
+import { Pressable } from 'react-native'
 import * as React from 'react'
 import { GLView } from "expo-gl";
-import { Renderer, TextureLoader } from "expo-three";
-import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader"
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader"
-import { Asset } from 'expo-asset';
+import { Renderer } from "expo-three";
 import { useEffect } from "react";
 import {
   AmbientLight,
@@ -22,10 +19,17 @@ import {
 import Car from './GameObjects/Car.js'
 import Obstacle from './GameObjects/Obstacle.js';
 import Road from './GameObjects/Road.js'
+import Animated, {
+	useSharedValue,
+	withTiming,
+	withSpring
+} from 'react-native-reanimated';
 
 export default function App() {
   let timeout;
-	const [lane, setLane] = React.useState({value: 0})
+	// const [lane, setLane] = React.useState({value: 0})
+	const lane = useSharedValue(0)
+	const carX = useSharedValue(0)
 
   useEffect(() => {
     // Clear the animation loop when the component unmounts
@@ -42,7 +46,7 @@ export default function App() {
 		renderer.shadowMap.enabled = true;
 		renderer.shadowMap.type = PCFSoftShadowMap;
     const camera = new PerspectiveCamera(70, width / height, 0.01, 1000);
-    camera.position.set(0, 5,5);
+    camera.position.set(0, 6,6);
     camera.lookAt(0,0,0);
     const scene = new Scene();
 
@@ -61,31 +65,28 @@ export default function App() {
     scene.add(dLight);
 
 		// floor initialization
-    const cube = new IconMesh();
-    scene.add(cube);
-		cube.position.set(0,-0.5,0);
-		cube.receiveShadow = true;
-    // const road = new Road('pavement', scene)
+    const road = new Road('pavement', scene)
 
 		// car and tree
-		// const o1  = new Obstacle('Tree', scene, [1,0,-7]);
-		// const	o2  = new Obstacle('Tree', scene, [-1,0,-4]);
-		// const obstacles = [o1, o2]
+		const o1  = new Obstacle('Tree', scene, [1,0,-7]);
+		const	o2  = new Obstacle('Tree', scene, [-1,0,-4]);
+		const obstacles = [o1, o2]
 		const car = new Car('car', scene);
 
 		// game logic here
     function update(dt) {
-			// for (let i = obstacles.length - 1; i >= 0; i--) {
-			// 	if (obstacles[i].update(dt)) {
-			// 		scene.remove(obstacles[i].obj)
-			// 		obstacles.splice(i, 1);
-			// 	};
-			// }
-			// if (obstacles.length < 3) {
-			// 	const new_o = new Obstacle('Tree', scene, [Math.floor(Math.random()*3-1),0,-7])
-			// 	obstacles.push(new_o)
-			// }
-			if (car.obj && lane) car.obj.position.x = lane.value * 1.5
+			for (let i = obstacles.length - 1; i >= 0; i--) {
+				if (obstacles[i].update(dt)) {
+					scene.remove(obstacles[i].obj)
+					obstacles.splice(i, 1);
+				};
+			}
+			if (obstacles.length < 3) {
+				const new_o = new Obstacle('Tree', scene, [Math.floor(Math.random()*3-1),0,-7])
+				obstacles.push(new_o)
+			}
+			if (car.obj && carX) car.obj.position.x = carX.value * 1.5
+			road.update(dt);
     }
 
     // Setup an animation loop
@@ -99,22 +100,25 @@ export default function App() {
     render();
   };
 
-  return (
-		<View style={{ flex: 1 }} >
-			<GLView style={{ flex: 1 }} onContextCreate={onContextCreate} />
-			<View style={{flexDirection: 'row', justifyContent: 'space-around', padding: 20}}>
-				<Button title="left" onPress={() => {if (lane.value>-1) lane.value = lane.value - 1}} />
-				<Button title="right" onPress={() => {if (lane.value<1) lane.value = lane.value + 1}} />
-			</View>
-		</View>
-	); 
-}
+	const [pressX] = React.useState({value: 0})
 
-class IconMesh extends Mesh {
-  constructor() {
-    super(
-      new BoxBufferGeometry(10, 1.0, 100),
-      new MeshStandardMaterial({})
-    );
-  }
+  return (
+		<Pressable style={{ flex: 1 }} 
+		onPressIn={(e) => {pressX.value = e.nativeEvent.pageX}}
+		onPressOut={(e) => {
+			if (e.nativeEvent.pageX<pressX.value&&lane.value>-1) {
+				// carX.value = withTiming(lane.value - 1, {duration: 500*(1-lane.value+carX.value)});
+				carX.value = withSpring(lane.value - 1)
+				lane.value = lane.value - 1;
+			}
+			else if (e.nativeEvent.pageX>pressX.value&&lane.value<1){
+				// carX.value = withTiming(lane.value + 1, {duration: 500*(1+lane.value-carX.value)});
+				carX.value = withSpring(lane.value + 1)
+				lane.value = lane.value + 1;
+			}
+		}}
+		>
+			<GLView style={{ flex: 1 }} onContextCreate={onContextCreate} />
+		</Pressable>
+	); 
 }

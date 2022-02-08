@@ -13,30 +13,81 @@ import {
 	PCFSoftShadowMap,
 	DirectionalLight
 } from "three";
+import loadGLTF from "../utils";
 
 export default class Road {
 	constructor(name, scene) {
 		this.name = name;
-		this.obj = null;
+		this.objs = [];
 		this.load(scene);
 	}
 	
 	async load(scene){
-		const car = Asset.fromModule(require(`../../assets/Game/Road.glb`))
-		await car.downloadAsync();
-		const loader = new GLTFLoader();
-		loader.load(car.localUri, (gltf) => {
+		const road = Asset.fromModule(require(`../../assets/Game/Road.glb`))
+		await road.downloadAsync();
+		loadGLTF(road).then(gltf => {
 			const obj = gltf.scene;
-			obj.position.set(0,0,0);
-			obj.scale.setScalar(0.5);
+			obj.position.set(0,0,2);
 			obj.traverse(t => {
 				if (t.isMesh){
 					t.receiveShadow = true;
 					t.castShadow = true;
 				}
 			})
-			this.obj = obj;
+			this.objs.push(obj);
 			scene.add(obj)
 		})
+		loadGLTF(road).then(gltf => {
+			const obj = gltf.scene;
+			obj.position.set(0,0,-3);
+			obj.traverse(t => {
+				if (t.isMesh){
+					t.receiveShadow = true;
+					t.castShadow = true;
+				}
+			})
+			this.objs.push(obj);
+			scene.add(obj)
+		})
+		loadGLTF(road).then(gltf => {
+			const obj = gltf.scene;
+			obj.position.set(0,0,-8);
+			obj.traverse(t => {
+				if (t.isMesh){
+					t.receiveShadow = true;
+					t.castShadow = true;
+				}
+			})
+			this.objs.push(obj)
+			scene.add(obj)
+		})
+		loadGLTF(road).then(gltf => {
+			const obj = gltf.scene;
+			obj.position.set(0,0,-13);
+			obj.traverse(t => {
+				if (t.isMesh){
+					t.receiveShadow = true;
+					t.castShadow = true;
+				}
+			})
+			this.objs.push(obj)
+			scene.add(obj)
+		})
+		loadGLTF(road).then(gltf => {
+			const obj = gltf.scene;
+			obj.position.set(0,0,-18);
+			obj.traverse(t => {
+				if (t.isMesh){
+					t.receiveShadow = true;
+					t.castShadow = true;
+				}
+			})
+			this.objs.push(obj)
+			scene.add(obj)
+		})
+	}
+
+	update(dt) {
+		this.objs.forEach(obj => obj.position.z += 0.08)
 	}
 }
