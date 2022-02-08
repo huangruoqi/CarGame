@@ -74,8 +74,8 @@ export default function App() {
     const road = new Road('pavement', scene)
 
 		// car and tree
-		const o1  = new Obstacle('Tree', scene, [1,0,-7]);
-		const	o2  = new Obstacle('Tree', scene, [-1,0,-4]);
+		const o1  = new Obstacle('Tree', scene, [1.5,0,-7]);
+		const	o2  = new Obstacle('Tree', scene, [-1.5,0,-4]);
 		const obstacles = [o1, o2]
 		const car = new Car('car', scene);
 
@@ -93,8 +93,25 @@ export default function App() {
 			}
 			if (car.obj && carX) car.obj.position.x = carX.value * 1.5
 			road.update(dt);
-			car.collision(obstacles);
+			if (car.collision(obstacles)) {
+				restart();
+			}
     }
+
+		function restart() {
+			lane.value = 0;
+			carX.value = 0;
+			const a1 = new Obstacle('Tree', scene, [1.5,0,-28]);
+			const a2 = new Obstacle('Tree', scene, [-1.5,0,-20]);
+			const a3 = new Obstacle('Tree', scene, [0,0,-10]);
+			for (let i = obstacles.length - 1; i >= 0; i--) {
+				scene.remove(obstacles[i].obj)
+				obstacles.splice(i, 1)
+			}
+			obstacles.push(a1)
+			obstacles.push(a2)
+			obstacles.push(a3)
+		}
 
     // Setup an animation loop
     const render = (now) => {

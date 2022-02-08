@@ -32,14 +32,17 @@ export default class Car {
 	}
 
 	collision(obstacles) {
+		if (!this.obj) return false;
 		carBoundL = this.obj.position.x - 0.5;
 		carBoundR = this.obj.position.x + 0.5;
-		for(let i = 0 ; i < obstacles.length - 1 ; i++){
+		for(let i = 0 ; i < obstacles.length; i++){
+			if (!obstacles[i].obj) continue;
 			if(obstacles[i].obj.position.x >= carBoundL && obstacles[i].obj.position.x <= carBoundR && obstacles[i].obj.position.z >= 1.5 && obstacles[i].obj.position.z <= 2.5)
 			{
-				console.log("hit", i)
+				return true;
 			}
 		}
+		return false;
 	}
 
 }
