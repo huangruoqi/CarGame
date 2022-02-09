@@ -1,18 +1,4 @@
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader"
 import { Asset } from 'expo-asset';
-import {
-  AmbientLight,
-  BoxBufferGeometry,
-  Fog,
-  Mesh,
-  MeshStandardMaterial,
-  PerspectiveCamera,
-  PointLight,
-  Scene,
-  SpotLight,
-	PCFSoftShadowMap,
-	DirectionalLight
-} from "three";
 import loadGLTF from "../utils";
 
 export default class Road {

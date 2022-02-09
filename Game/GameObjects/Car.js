@@ -1,10 +1,4 @@
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader"
 import { Asset } from 'expo-asset';
-import { loadObjAsync, loadTextureAsync } from 'expo-three';
-import { resolveAsync } from 'expo-asset-utils';
-import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader';
-import { FileSystem } from 'react-native-unimodules';
-import { decode } from 'base64-arraybuffer';
 import loadGLTF from "../utils.js";
 export default class Car {
 	constructor(name, scene) {

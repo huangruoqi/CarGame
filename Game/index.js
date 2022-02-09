@@ -25,6 +25,7 @@ import Animated, {
 	withTiming,
 	withSpring
 } from 'react-native-reanimated';
+import MBox from './GameObjects/MeeseekBox.js';
 
 export default function App() {
   let timeout;
@@ -68,15 +69,18 @@ export default function App() {
     scene.add(dLight);
 
 		const plight = new PointLight(0xffffff, 0.5);
-		plight.position.set(0,20,0);
+		plight.position.set(0,20,20);
 		scene.add(plight);
+		const plight2 = new PointLight(0xffffff, 0.5);
+		plight2.position.set(0,2,20);
+		scene.add(plight2);
 
 		// floor initialization
     const road = new Road('pavement', scene)
 
 		// car and tree
-		const o1  = new Obstacle('Tree', scene, [1.5,0,-7]);
-		const	o2  = new Obstacle('Tree', scene, [-1.5,0,-4]);
+		const o1  = new MBox('Tree', scene, [1.5,0.5,-7]);
+		const	o2  = new MBox('Tree', scene, [-1.5,0.5,-4]);
 		const obstacles = [o1, o2]
 		const car = new Car('car', scene);
 
@@ -89,7 +93,7 @@ export default function App() {
 				};
 			}
 			if (obstacles.length < 3) {
-				const new_o = new Obstacle('Tree', scene, [1.5*Math.floor(Math.random()*3-1),0,-30])
+				const new_o = new MBox('Tree', scene, [1.5*Math.floor(Math.random()*3-1),0.5,-30])
 				obstacles.push(new_o)
 			}
 			if (car.obj && carX) car.obj.position.x = carX.value * 1.5
@@ -103,9 +107,9 @@ export default function App() {
 		function restart() {
 			lane.value = 0;
 			carX.value = 0;
-			const a1 = new Obstacle('Tree', scene, [1.5,0,-28]);
-			const a2 = new Obstacle('Tree', scene, [-1.5,0,-20]);
-			const a3 = new Obstacle('Tree', scene, [0,0,-10]);
+			const a1 = new MBox('Tree', scene, [1.5,0.5,-28]);
+			const a2 = new MBox('Tree', scene, [-1.5,0.5,-20]);
+			const a3 = new MBox('Box', scene, [0,0.5,-10]);
 			for (let i = obstacles.length - 1; i >= 0; i--) {
 				scene.remove(obstacles[i].obj)
 				obstacles.splice(i, 1)
