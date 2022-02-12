@@ -1,32 +1,13 @@
-import { Asset } from 'expo-asset';
-import loadGLTF from "../utils";
-
 export default class Road {
-	constructor(name, scene) {
-		this.name = name;
-		this.objs = [];
-		this.load(scene);
-	}
-	
-	async load(scene){
-		const roads = [];
-		const road = Asset.fromModule(require(`../../assets/Game/Road.glb`))
-		await road.downloadAsync();
+	constructor(scene, generator) {
+		this.objs = []
 		for(let i = 0; i < 10; i++){
-			const gltf = await loadGLTF(road);
-			const obj = gltf.scene;
+			const obj = generator.get('road');
 			obj.position.set(0,0,2-i*5);
-			obj.traverse(t => {
-				if (t.isMesh){
-					t.receiveShadow = true;
-					t.castShadow = true;
-				}
-			})
-			roads.push(obj);
+			this.objs.push(obj)
 		}
-		for(let i = 0 ; i <10 ; i++){
-			this.objs.push(roads[i]);
-			scene.add(roads[i])
+		for (let i = 0; i < 10; i++) {
+			scene.add(this.objs[i]);
 		}
 	}
 

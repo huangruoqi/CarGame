@@ -5,10 +5,6 @@ import { Renderer } from "expo-three";
 import { useEffect } from "react";
 import {
   AmbientLight,
-  BoxBufferGeometry,
-  Fog,
-  Mesh,
-  MeshStandardMaterial,
   PerspectiveCamera,
   PointLight,
   Scene,
@@ -18,18 +14,16 @@ import {
 	Clock
 } from "three";
 import Car from './GameObjects/Car.js'
-import Obstacle from './GameObjects/Obstacle.js';
-import Road from './GameObjects/Road.js'
 import Animated, {
 	useSharedValue,
 	withTiming,
 	withSpring
 } from 'react-native-reanimated';
-import MBox from './GameObjects/MeeseekBox.js';
+import GameContainer from './GameObjects/GameContainer.js';
+import ObjectGenerator from './GameObjects/ObjectGenerator.js';
 
 export default function App() {
   let timeout;
-	// const [lane, setLane] = React.useState({value: 0})
 	const lane = useSharedValue(0)
 	const carX = useSharedValue(0)
 	const carR = useSharedValue(0)
@@ -47,7 +41,7 @@ export default function App() {
     const renderer = new Renderer({ gl });
     renderer.setSize(width, height);
     renderer.setClearColor(sceneColor);
-		renderer.shadowMap.enabled = true;
+		// renderer.shadowMap.enabled = true;
 		renderer.shadowMap.type = PCFSoftShadowMap;
     const camera = new PerspectiveCamera(70, width / height, 0.01, 1000);
     camera.position.set(0, 6,6);
@@ -75,48 +69,33 @@ export default function App() {
 		plight2.position.set(0,2,20);
 		scene.add(plight2);
 
-		// floor initialization
-    const road = new Road('pavement', scene)
-
-		// car and tree
-		const o1  = new MBox('Tree', scene, [1.5,0.5,-7]);
-		const	o2  = new MBox('Tree', scene, [-1.5,0.5,-4]);
-		const obstacles = [o1, o2]
-		const car = new Car('car', scene);
-
+		// Game preload
+		const generator = new ObjectGenerator();	
+		let game;
+		
 		// game logic here
+		let isLoaded = false;
     function update(dt) {
-			for (let i = obstacles.length - 1; i >= 0; i--) {
-				if (obstacles[i].update(dt)) {
-					scene.remove(obstacles[i].obj)
-					obstacles.splice(i, 1);
-				};
+			if (!isLoaded) {
+				if (generator.isLoaded) {
+					game = new GameContainer(scene, generator);
+					isLoaded = true;
+				}
 			}
-			if (obstacles.length < 3) {
-				const new_o = new MBox('Tree', scene, [1.5*Math.floor(Math.random()*3-1),0.5,-30])
-				obstacles.push(new_o)
-			}
-			if (car.obj && carX) car.obj.position.x = carX.value * 1.5
-			if (car.obj) car.obj.rotation.y = carR.value * Math.PI / 9;
-			road.update(dt);
-			if (car.collision(obstacles)) {
-				restart();
-			}
+			if (game) game.update(dt);	
+
+			// will clean up later
+			const car = game ? game.car:null;
+			if (car && car.obj && carX) car.obj.position.x = carX.value * 1.5
+			if (car && car.obj) car.obj.rotation.y = carR.value * Math.PI / 9;
+			// if (car.collision(game.oc.obstacles)) {
+			// 	restart();
+			// }
     }
 
 		function restart() {
 			lane.value = 0;
 			carX.value = 0;
-			const a1 = new MBox('Tree', scene, [1.5,0.5,-28]);
-			const a2 = new MBox('Tree', scene, [-1.5,0.5,-20]);
-			const a3 = new MBox('Box', scene, [0,0.5,-10]);
-			for (let i = obstacles.length - 1; i >= 0; i--) {
-				scene.remove(obstacles[i].obj)
-				obstacles.splice(i, 1)
-			}
-			obstacles.push(a1)
-			obstacles.push(a2)
-			obstacles.push(a3)
 		}
 
     // Setup an animation loop
@@ -127,7 +106,7 @@ export default function App() {
       renderer.render(scene, camera);
       gl.endFrameEXP();
     };
-    render();
+		render();
   };
 
 	const [pressX] = React.useState({value: 0})
