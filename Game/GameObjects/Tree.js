@@ -4,6 +4,8 @@ export default class Tree {
 		this.obj.position.set(p[0], p[1], p[2]);
 		this.obj.rotation.y = Math.random()*2*Math.PI;
 		scene.add(this.obj);
+		this.width = 0.2;
+		this.length = 0.2;
 	}
 
 	update(dt) {

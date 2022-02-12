@@ -5,6 +5,8 @@ export default class Mbox {
 		this.obj.scale.setScalar(0.8)
 		this.obj.rotation.y = Math.random()*2*Math.PI;
 		scene.add(this.obj);
+		this.width = 0.6;
+		this.length = 0.6;
 	}
 
 	update(dt) {

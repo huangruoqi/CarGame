@@ -5,20 +5,21 @@ export default class Car {
 		this.obj.scale.setScalar(0.3);
 		this.obj.rotation.y = Math.random()*2*Math.PI;
 		scene.add(this.obj);
+		this.width = 0.8;
+		this.length = 1.5;
 	}
 	
 	collision(obstacles) {
-		if (!this.obj) return false;
-		carBoundL = this.obj.position.x - 0.5;
-		carBoundR = this.obj.position.x + 0.5;
+		if (!this.obj) return undefined;
 		for(let i = 0 ; i < obstacles.length; i++){
 			if (!obstacles[i].obj) continue;
-			if(obstacles[i].obj.position.x >= carBoundL && obstacles[i].obj.position.x <= carBoundR && obstacles[i].obj.position.z >= 1.5 && obstacles[i].obj.position.z <= 2.5)
-			{
-				return true;
+			if ((obstacles[i].width + this.width)/2 > Math.abs(this.obj.position.x - obstacles[i].obj.position.x)){
+				if ((obstacles[i].length + this.length)/2 > Math.abs(this.obj.position.z - obstacles[i].obj.position.z)) {
+					return i;
+				}
 			}
 		}
-		return false;
+		return undefined;
 	}
 
 }

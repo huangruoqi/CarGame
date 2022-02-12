@@ -1,7 +1,7 @@
 import MBox from "./MeeseekBox";
 
 const rw_list = [MBox] 
-export default class ObstacleContainer {
+export default class RewardContainer {
 	constructor(scene, generator) {
 		this.rewards = [];
 		this.scene = scene;
@@ -15,12 +15,18 @@ export default class ObstacleContainer {
 			if (oo.obj) {
 				oo.obj.position.z += 8 * dt;
 				if (oo.obj.position.z > 25) {
-					this.scene.remove(oo.obj);
-					this.rewards.splice(i, 1);
+					this.remove(i)
 				}
 			}
 		}
 	}
+
+	remove(i) {
+		this.scene.remove(this.rewards[i].obj);
+		this.rewards.splice(i, 1);
+	}
+
+
 
 	generate_new_reward(p) {
 		const new_rw = new (randomItem(rw_list))(this.scene, this.generator, p);
