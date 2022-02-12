@@ -1,5 +1,4 @@
-import ObstacleContainer from './ObstacleContainer.js'
-import RewardContainer from './RewardContainer.js'
+import ObjectContainer from './ObjectContainer.js'
 import Road from './Road.js';
 import Car from './Car.js';
 
@@ -19,27 +18,37 @@ const patterns = [
 	['o..r..', 'r..o..', '.o..r.', '.r..o.', '..o..r', '..r..o', 'rrr.o.'], // level 2
 	[], // level 3
 	[]  // ... 
-]
+];
 
 export default class GameContainer {
-	constructor(scene, generator) {
+	constructor(scene, generator, solve_collision) {
 		this.scene = scene;
-		this.road = new Road(this.scene, generator);
-		this.car = new Car(this.scene, generator);
-		this.oc = new ObstacleContainer(this.scene, generator)
-		this.rc = new RewardContainer(this.scene, generator)
+		this.isLoaded = false;
+		generator.preload().then(() => {
+			this.road = new Road(this.scene, generator);
+			this.car = new Car(this.scene, generator);
+			this.oc = new ObjectContainer(this.scene, generator)
+			this.isLoaded = true;
+		})
 		this.timeElapsed = 0;
+		this.score = 0;
+		this.solve_collision = solve_collision;
 	}
 
 	update(dt) {
-		this.timeElapsed+=dt;
 		this.road.update(dt);
 		this.oc.update(dt);
-		this.rc.update(dt);
-		// this.car.update(dt);
+		// generate new objects
+		this.timeElapsed+=dt;
 		if (this.timeElapsed > 3) {
 			this.timeElapsed = 0;
 			this.add_pattern(2);
+		}
+		// handle collision
+		const obj_index = this.car.collision(this.oc.list);
+		if (obj_index!=undefined) {
+			this.solve_collision(this.oc.list[obj_index])
+			this.oc.remove(obj_index)
 		}
 	}
 
@@ -52,10 +61,12 @@ export default class GameContainer {
 					this.oc.generate_new_obstacle([(i % 3 - 1) * 1.5, 0.5, -40 - 3 * (Math.floor(i / 3))]);
 					break;
 				case 'r':
-					this.rc.generate_new_reward([(i % 3 - 1) * 1.5, 0.5, -40 - 3 * (Math.floor(i / 3))]);
+					this.oc.generate_new_reward([(i % 3 - 1) * 1.5, 0.5, -40 - 3 * (Math.floor(i / 3))]);
 					break;
 			}
 		}
 	}
 
+	setCarPosition(x) { this.car.obj.position.x = x; }
+	setCarRotation(y) { this.car.obj.rotation.y = y; }
 }

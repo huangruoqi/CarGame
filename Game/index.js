@@ -2,18 +2,16 @@ import { Pressable, View } from 'react-native'
 import * as React from 'react'
 import { GLView } from "expo-gl";
 import { Renderer } from "expo-three";
-import { useEffect } from "react";
 import {
   AmbientLight,
   PerspectiveCamera,
   PointLight,
   Scene,
-  SpotLight,
 	PCFSoftShadowMap,
 	DirectionalLight,
 	Clock
 } from "three";
-import Animated, {
+import {
 	useSharedValue,
 	withTiming,
 	withSpring
@@ -30,10 +28,7 @@ export default function App() {
 	const clock = new Clock();
 	const animate = React.useRef(null);
 
-  useEffect(() => {
-    // Clear the animation loop when the component unmounts
-    return () => clearTimeout(timeout);
-  }, []);
+  React.useEffect(() => clearTimeout(timeout), []);
 
   const onContextCreate = async (gl) => {
     // Create a WebGLRenderer without a DOM element
@@ -42,7 +37,7 @@ export default function App() {
     const renderer = new Renderer({ gl });
     renderer.setSize(width, height);
     renderer.setClearColor(sceneColor);
-		// renderer.shadowMap.enabled = true;
+		renderer.shadowMap.enabled = true;
 		renderer.shadowMap.type = PCFSoftShadowMap;
     const camera = new PerspectiveCamera(70, width / height, 0.01, 1000);
     camera.position.set(0, 6,6);
@@ -60,6 +55,10 @@ export default function App() {
 		dLight.shadow.mapSize.width = 2048
 		dLight.shadow.mapSize.height = 2048
 		dLight.shadow.bias = -0.000035
+		dLight.shadow.camera.left = -5;
+		dLight.shadow.camera.right = 25;
+		dLight.shadow.camera.top = 5;
+		dLight.shadow.camera.bototm = -5;
 		dLight.lookAt(0,0,0);
     scene.add(dLight);
 
@@ -69,53 +68,32 @@ export default function App() {
 		const plight2 = new PointLight(0xffffff, 0.5);
 		plight2.position.set(0,2,20);
 		scene.add(plight2);
-
-		// Game preload
-		const generator = new ObjectGenerator();	
-		let game;
 		
-		let score = 0;
-		// game logic here
-		let isLoaded = false;
-    function update(dt) {
-			if (!isLoaded) {
-				if (generator.isLoaded) {
-					game = new GameContainer(scene, generator);
-					isLoaded = true;
-				}
-			}
-			if (game) game.update(dt);	
+		const game = new GameContainer(scene, new ObjectGenerator(), solve_collision);
 
-			// will clean up later
-			const car = game ? game.car:null;
-			if (car && car.obj && carX) car.obj.position.x = carX.value * 1.5
-			if (car && car.obj) car.obj.rotation.y = carR.value * Math.PI / 9;
-			if (car && car.collision(game.oc.obstacles)!=undefined) {
-				restart();
+		function solve_collision(object) {
+			game.score += object.score;
+			game.score = Math.max(game.score, 0);
+			switch (object.name) {
+				case 'mbox': 
+					animate.current('score', {total: game.score, diff: object.score})
+					break;
+				case 'tree': 
+					animate.current('score', {total: game.score, diff: object.score})
+					break;
 			}
-			if (car) {
-				const b = car.collision(game.rc.rewards)
-				if (b != undefined) {
-					score += 100;
-					addScore(score, 100);
-					game.rc.remove(b)
-				}
+		}
+
+    function update(dt) {
+			if (game.isLoaded) {
+				game.update(dt);	
+				game.setCarPosition(carX.value * 1.6);
+				game.setCarRotation(carR.value * Math.PI / 9);
 			}
     }
 
-		function restart() {
-			lane.value = 0;
-			carX.value = 0;
-			score = 0;
-			animate.current(score, -1)
-		}
-
-		function addScore(score, add) {
-			animate.current(score, add)
-		}
-
     // Setup an animation loop
-    const render = (now) => {
+    const render = () => {
       timeout = requestAnimationFrame(render);
 			const dt = clock.getDelta();
       update(dt);
@@ -125,24 +103,22 @@ export default function App() {
 		render();
   };
 
+	// user input logic
 	const [pressX] = React.useState({value: 0})
-
   return (
 		<View style={{flex: 1}}>
 			<Pressable style={{ flex: 1 }} 
 			onPressIn={(e) => {pressX.value = e.nativeEvent.pageX}}
 			onPressOut={(e) => {
 				if (e.nativeEvent.pageX<pressX.value&&lane.value>-1) {
-					// carX.value = withTiming(lane.value - 1, {duration: 500*(1-lane.value+carX.value)});
 					carX.value = withSpring(lane.value - 1)
-					lane.value = lane.value - 1;
 					carR.value = withTiming(1, {duration:200}, () => carR.value = withTiming(0, {duration:200}))
+					lane.value = lane.value - 1;
 				}
 				else if (e.nativeEvent.pageX>pressX.value&&lane.value<1){
-					// carX.value = withTiming(lane.value + 1, {duration: 500*(1+lane.value-carX.value)});
 					carX.value = withSpring(lane.value + 1)
-					lane.value = lane.value + 1;
 					carR.value = withTiming(-1, {duration:200}, () => carR.value = withTiming(0, {duration:200}))
+					lane.value = lane.value + 1;
 				}
 			}}
 			>

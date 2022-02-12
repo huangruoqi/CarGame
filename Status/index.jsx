@@ -21,14 +21,12 @@ export default function Status({
   color='white',
   // replay,
   // menu,
-	// gameOver,
-	// gameOver_list
 }) {
   
   // const [open, setOpen] = React.useState(false);
 	const [score, setScore] = React.useState(0);
 	const [animation_value, setAnimationValue] = React.useState(' ');
-	const [closeButton, setCloseButton] = React.useState(false);
+	// const [closeButton, setCloseButton] = React.useState(false);
 	const [loaded] = useFonts({
     Bomb: require('./bomb.ttf'),
   });
@@ -48,15 +46,27 @@ export default function Status({
 
 	// Score animation
 	React.useEffect(() => {
-		animate.current = (total_score, add) => {
-			setAnimationValue(add<0?'':'+'+add);
-			setScore(total_score);
-			animate_score();
+		animate.current = (name, props) => {
+			switch (name) {
+				case 'score': {
+					const {total, diff} = props;
+					change_score(total, diff);
+					break;
+				}
+				case 'coin': {
+
+					break;
+				}
+			}	
 		}
 	}, [])
-	function animate_score() {
+
+	function change_score(total, diff) {
+		setAnimationValue((diff<=0?'':'+')+(diff==0?'':diff));
+		setScore(total);
 		score_animation_progress.value = withTiming(1, null, () => score_animation_progress.value = withTiming(0));
 	}
+
 	const score_animation_progress = useSharedValue(0);
 	const rStyle_score = useAnimatedStyle(() => (
 		{
@@ -66,34 +76,6 @@ export default function Status({
 			]
 		}	
 	))
-
-	// End screen animation
-	// const [endScreen, setEndScreen] = React.useState(false);
-	// const [replayButton, setReplayButton] = React.useState(false);
-	// React.useEffect(() => {
-	// 	if (!gameOver) return;
-	// 	gameOver.current = () => {
-	// 		setEndScreen(true);
-	// 		setReplayButton(true);
-	// 		end_progress.value = withTiming(1);
-	// 	}
-	// }, [])
-	// const end_progress = useSharedValue(0);
-	// const rStyle_end = useAnimatedStyle(() => (
-	// 	{
-	// 		opacity: end_progress.value,
-	// 		transform: [
-	// 			{ translateX: (1-end_progress.value) * -500 }
-	// 		]
-	// 	}
-	// ));
-
-	// const close_end_screen = () => {
-	// 	end_progress.value = 0;
-	// 	setEndScreen(false)
-	// 	setReplayButton(false);
-	// 	replay();
-	// }
 
 	if (!loaded) return null;
   return (
@@ -143,15 +125,7 @@ export default function Status({
 							</View>
 						</View>
 					)} */}
-				{/* { endScreen && (
-						<View style={styles.fullscreen} >
-							<View style={styles.outter}>
-								<Animated.View style={[styles.menu_container, rStyle_end]}>
-									<FinalScores list={gameOver_list} close={close_end_screen}/>
-								</Animated.View>
-							</View>
-						</View>
-					)} */}
+				
 			</>
   )
 }

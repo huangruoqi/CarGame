@@ -14,7 +14,6 @@ export default class ObjectGenerator {
 	constructor() {
 		this.table = {};
 		this.isLoaded = false;
-		this.preload();
 	}
 
 	async preload() {

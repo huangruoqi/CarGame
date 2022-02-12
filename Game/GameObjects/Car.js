@@ -1,9 +1,9 @@
 export default class Car {
 	constructor(scene, generator) {
+		this.name = 'car'
 		this.obj = generator.get('car');
 		this.obj.position.set(0, 0.7, 2);
-		this.obj.scale.setScalar(0.3);
-		this.obj.rotation.y = Math.random()*2*Math.PI;
+		this.obj.scale.setScalar(0.35);
 		scene.add(this.obj);
 		this.width = 0.8;
 		this.length = 1.5;
