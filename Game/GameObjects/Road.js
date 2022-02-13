@@ -11,9 +11,9 @@ export default class Road {
 		}
 	}
 
-	update(dt) {
+	update(dt, speed) {
 		this.objs.forEach(obj => {
-			obj.position.z += 8*dt
+			obj.position.z += 8 * speed * dt
 			if (obj.position.z > 8)
 				obj.position.z -= 40;
 		})

@@ -12,14 +12,14 @@ export default class ObjectContainer {
 		this.generator = generator;
 	}
 
-	update(dt) {
+	update(dt, speed) {
 		for(let i = this.list.length - 1; i >= 0; i--) {
+			this.list[i].update(dt);
 			const oo = this.list[i].obj;
 			if (oo) {
-				oo.position.z += 8 * dt;
-				if (oo.position.z > 25) this.remove(i);
+				oo.position.z += 8 * speed * dt;
+				if (oo.position.z > 12) this.remove(i);
 			}
-			this.list[i].update(dt);
 		}
 	}
 

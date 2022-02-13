@@ -19,17 +19,16 @@ import FinalScores from './FinalScores';
 export default function Status({
 	animate,
   color='white',
-  // replay,
+	toggle_pause
   // menu,
 }) {
-  
-  // const [open, setOpen] = React.useState(false);
-	const [score, setScore] = React.useState(0);
-	const [animation_value, setAnimationValue] = React.useState(' ');
-	// const [closeButton, setCloseButton] = React.useState(false);
+
 	const [loaded] = useFonts({
     Bomb: require('./bomb.ttf'),
   });
+	const [score, setScore] = React.useState(0);
+	const [animation_value, setAnimationValue] = React.useState(' ');
+	const [paused, setPaused] = React.useState(false);
 
 	// menu animation
 	const progress = useSharedValue(0);
@@ -82,50 +81,31 @@ export default function Status({
 		<>
       <View style={styles.container}>
         <View style={styles.status}>
-          <View>
+          <View style={{paddingTop: 4}}>
             <Text style={[styles.score, {color: color }]} >Score: {score}</Text>
 						<Animated.View style={rStyle_score}>
 							<Text style={[styles.score, {color: color }]}>          {animation_value}</Text>
 						</Animated.View>
           </View>
-          {/* <View style={{flexDirection: 'row'}}>
-            {replay && 
-              <TouchableOpacity onPress={replay}>
-                <Ionicons name='reload' style={styles.replay} color={color} size={30} />
+          <View style={{flexDirection: 'row'}}>
+              <TouchableOpacity onPress={() => {
+								toggle_pause();
+								setPaused(true);
+							}}>
+                <Ionicons name='pause' color={color} size={30} />
               </TouchableOpacity>
-            }
-            <TouchableOpacity onPress={() => { 
-							progress.value = withSpring(1); 
-							opacityProgress.value = withTiming(1); 
-							setOpen(true);
-							setCloseButton(true);
-						}} >
-              <Ionicons name='list' style={styles.menu_icon} color={color} size={30} />
-            </TouchableOpacity>
-          </View> */}
+          </View>
         </View>
-        
       </View>
-				{/* {open && (
-						<View style={styles.fullscreen} >
-							<View style={styles.outter}>
-								<Animated.View style={[styles.menu_container, rStyle_menu]}>
-									{menu}
-								</Animated.View>
-								{ closeButton &&
-									<TouchableOpacity style={styles.close_icon} onPress={() => { 
-										progress.value = 0;
-										opacityProgress.value = 0;
-										setOpen(false)
-										setCloseButton(false);
-									}}>
-										<Text style={{color: color, fontFamily: 'Bomb', fontSize: 38}}>x</Text>
-									</TouchableOpacity>
-								}
-							</View>
-						</View>
-					)} */}
-				
+			{ paused &&
+				<Pressable style={styles.pause_screen} onPress={() => {
+					setPaused(false);
+					toggle_pause();
+				}}>
+					<Text style={{fontSize: 50, color: color, fontFamily: 'Bomb'}}>Pause</Text>
+					<Text style={{fontSize: 20, color: color, fontFamily: 'Bomb'}}>(Tap anywhere to continue)</Text>
+				</Pressable>
+			}
 			</>
   )
 }
@@ -158,41 +138,14 @@ const styles = StyleSheet.create({
     fontFamily: 'Bomb',
     fontSize: 30,
   },
-  replay: {
-    paddingRight:10
-  },
-  menu_icon: {
-    fontFamily: 'Bomb',
-  },
-  fullscreen: {
+  pause_screen: {
     position: "absolute",
     top: 0,
     left: 0,
     width: "100%",
     height: "100%",
-		backgroundColor: "#000a"
-  },
-  outter: {
-    flex: 1,
-  },
-  menu_container: {
-    flex: 1,
-    marginTop: 120,
-    marginBottom: 90,
-    marginLeft: 20,
-    marginRight: 20,
-    borderRadius: 30,
-    overflow: 'hidden'
-  },
-  close_icon: {
-    position: 'absolute',
-    top: 130,
-    right: 30,
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: 'black',
-    alignItems: 'center',
-    justifyContent: 'center',
-  }
+		backgroundColor: "#000a",
+		justifyContent: 'center',
+		alignItems: 'center'
+	}
 });

@@ -22,6 +22,7 @@ import Status from '../Status';
 
 export default function App() {
   let timeout;
+	const [g, setG] = React.useState(null);
 	const lane = useSharedValue(0)
 	const carX = useSharedValue(0)
 	const carR = useSharedValue(0)
@@ -37,7 +38,7 @@ export default function App() {
     const renderer = new Renderer({ gl });
     renderer.setSize(width, height);
     renderer.setClearColor(sceneColor);
-		renderer.shadowMap.enabled = true;
+		// renderer.shadowMap.enabled = true;
 		renderer.shadowMap.type = PCFSoftShadowMap;
     const camera = new PerspectiveCamera(70, width / height, 0.01, 1000);
     camera.position.set(0, 6,6);
@@ -69,7 +70,8 @@ export default function App() {
 		plight2.position.set(0,2,20);
 		scene.add(plight2);
 		
-		const game = new GameContainer(scene, new ObjectGenerator(), solve_collision);
+		const game = new GameContainer(scene, new ObjectGenerator(), solve_collision)
+		setG(game)
 
 		function solve_collision(object) {
 			game.score += object.score;
@@ -85,11 +87,11 @@ export default function App() {
 		}
 
     function update(dt) {
-			if (game.isLoaded) {
+			if (!game.isPaused) {
 				game.update(dt);	
-				game.setCarPosition(carX.value * 1.6);
-				game.setCarRotation(carR.value * Math.PI / 9);
 			}
+			game.setCarPosition(carX.value * 1.6);
+			game.setCarRotation(carR.value * Math.PI / 9);
     }
 
     // Setup an animation loop
@@ -124,7 +126,7 @@ export default function App() {
 			>
 				<GLView style={{ flex: 1 }} onContextCreate={onContextCreate} />
 			</Pressable>
-			<Status animate={animate}></Status>
+			<Status animate={animate} toggle_pause={_=>{if(g)g.isPaused=!g.isPaused}}></Status>
 		</View>
 	); 
 }
