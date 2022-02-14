@@ -1,10 +1,10 @@
 // obstacles
-import Tree from "./Tree";
+import Cone from "./Cone";
 // rewards
-import MBox from "./MeeseekBox";
+import Coin from "./Coin";
 
-const ob_list = [Tree] 
-const rw_list = [MBox]
+const ob_list = [Cone] 
+const rw_list = [Coin]
 export default class ObjectContainer {
 	constructor(scene, generator) {
 		this.list = [];
