@@ -18,7 +18,8 @@ import {
 } from 'react-native-reanimated';
 import GameContainer from './GameObjects/GameContainer.js';
 import ObjectGenerator from './GameObjects/ObjectGenerator.js';
-import Status from '../Status';
+import Status from '../modules/Status';
+import Sound from '../modules/Sound'
 
 export default function App() {
   let timeout;
@@ -81,6 +82,7 @@ export default function App() {
 					animate.current('score', {total: game.score, diff: object.score})
 					break;
 				case 'tree': 
+					new Sound().play('crash');
 					animate.current('score', {total: game.score, diff: object.score})
 					break;
 			}

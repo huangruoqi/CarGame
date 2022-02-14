@@ -1,5 +1,4 @@
 import { Asset } from 'expo-asset';
-import { alignMesh } from 'expo-three/build/utils';
 import loadGLTF from '../utils';
 
 const object_list = [
