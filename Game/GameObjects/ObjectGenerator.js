@@ -8,6 +8,7 @@ const object_list = [
 	{name: 'road', path: require('../../assets/Game/Road.glb')},
 	{name: 'mbox', path: require('../../assets/Game/Mbox.glb')},
 	{name: 'coin', path: require('../../assets/Game/coin.glb')},
+	{name: 'cone', path: require('../../assets/Game/cone.glb')}
 ]
 
 export default class ObjectGenerator {

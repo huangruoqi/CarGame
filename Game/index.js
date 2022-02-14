@@ -77,10 +77,10 @@ export default function App() {
 			game.score += object.score;
 			game.score = Math.max(game.score, 0);
 			switch (object.name) {
-				case 'mbox': 
+				case 'coin': 
 					animate.current('score', {total: game.score, diff: object.score})
 					break;
-				case 'tree': 
+				case 'cone': 
 					animate.current('score', {total: game.score, diff: object.score})
 					break;
 			}
