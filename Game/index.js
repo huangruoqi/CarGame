@@ -35,7 +35,7 @@ export default function App() {
   const onContextCreate = async (gl) => {
     // Create a WebGLRenderer without a DOM element
     const { drawingBufferWidth: width, drawingBufferHeight: height } = gl;
-    const sceneColor = 0x6ad6f0;
+    const sceneColor = 0x000000;
     const renderer = new Renderer({ gl });
     renderer.setSize(width, height);
     renderer.setClearColor(sceneColor);
