@@ -17,6 +17,7 @@ export default class GameContainer {
 		this.timeElapsed = 0;
 		this.patternCount = 0;
 		this.score = 0;
+		this.coin = 0;
 		this.solve_collision = solve_collision;
 	}
 

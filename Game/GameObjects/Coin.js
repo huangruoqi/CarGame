@@ -9,6 +9,7 @@ export default class Coin {
 		this.width = 0.6;
 		this.length = 0.6;
 		this.score = 100;
+		this.coin = 1;
 	}
 
 	update(dt) {
