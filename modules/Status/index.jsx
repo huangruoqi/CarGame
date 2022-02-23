@@ -4,7 +4,8 @@ import {
 	Text, 
 	StyleSheet, 
 	TouchableOpacity, 
-	Pressable 
+	Pressable,
+	Image
 } from 'react-native';
 import { useFonts } from 'expo-font';
 import { Ionicons } from '@expo/vector-icons'
@@ -42,6 +43,8 @@ export default function Status({
 			]
 		}	
 	))
+	
+	const [coin, setCoin] = React.useState(0);
 
 	// Score animation
 	React.useEffect(() => {
@@ -53,7 +56,8 @@ export default function Status({
 					break;
 				}
 				case 'coin': {
-
+					const {total, diff} = props;
+					setCoin(total)
 					break;
 				}
 			}	
@@ -65,6 +69,7 @@ export default function Status({
 		setScore(total);
 		score_animation_progress.value = withTiming(1, null, () => score_animation_progress.value = withTiming(0));
 	}
+
 
 	const score_animation_progress = useSharedValue(0);
 	const rStyle_score = useAnimatedStyle(() => (
@@ -81,11 +86,27 @@ export default function Status({
 		<>
       <View style={styles.container}>
         <View style={styles.status}>
-          <View style={{paddingTop: 4}}>
-            <Text style={[styles.score, {color: color }]} >Score: {score}</Text>
-						<Animated.View style={rStyle_score}>
-							<Text style={[styles.score, {color: color }]}>          {animation_value}</Text>
-						</Animated.View>
+          <View style={{paddingTop: 4, alignItems: "flex-start"}}>
+			  <View style={styles.scoreContainer}>
+				<View style={styles.scoreBackground}/>
+				<View style={styles.scoreContent}>
+					<Text style={[styles.score, {color: color }]} >Score: {score}</Text>
+								<Animated.View style={rStyle_score}>
+									<Text style={[styles.score, {color: color }]}>          {animation_value}</Text>
+								</Animated.View>
+				</View>
+			  </View>
+
+			<View style={styles.coinContainer}>
+				<View style={styles.coinBackground}/>
+				<View style={styles.coinContent}>
+					<Image
+					style={styles.coinLogo}
+					source={require('../../assets/Game/coin_with_white_outline_s.png')}
+					/>
+					<Text style={styles.coinCount}>{coin}</Text>
+				</View>
+			</View>
           </View>
           <View style={{flexDirection: 'row'}}>
               <TouchableOpacity onPress={() => {
@@ -111,41 +132,101 @@ export default function Status({
 }
 
 const styles = StyleSheet.create({
-  container: {
-    position: "absolute",
+  	container: {
+    	position: "absolute",
 		top:0,
 		left: 0,
-    width: "100%",
-    height: 100,
-    paddingTop: 30,
-  },
+		width: "100%",
+		height: 100,
+		paddingTop: 30,
+  	},
 	container2: {
-    position: "absolute",
+    	position: "absolute",
 		top:0,
 		left: 0,
-    width: "100%",
-    height: "100%",
-    paddingTop: 30,
-  },
-  status: {
-    flex: 1,
-    flexDirection: 'row',
-    padding: 20,
-    justifyContent: "space-between",
-  },
-  score: {
-    color: 'white',
-    fontFamily: 'Bomb',
-    fontSize: 30,
-  },
-  pause_screen: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    width: "100%",
-    height: "100%",
+		width: "100%",
+		height: "100%",
+		paddingTop: 30,
+  	},
+  	status: {
+		flex: 1,
+		flexDirection: 'row',
+		padding: 20,
+		justifyContent: "space-between",
+ 	},
+  	score: {
+		color: 'white',
+		fontFamily: 'Bomb',
+		fontSize: 30,
+  	},
+  	pause_screen: {
+		position: "absolute",
+		top: 0,
+		left: 0,
+		width: "100%",
+		height: "100%",
 		backgroundColor: "#000a",
 		justifyContent: 'center',
 		alignItems: 'center'
+	},
+	coinContainer:{
+		height: 30,
+		width: 100,
+		alignItems:	"center",
+		flexDirection: "row",
+		marginTop: 20
+	},
+	coinContent: {
+		width: 100,
+		// flex: 1,
+		flexDirection: "row",
+		position: "absolute",
+		justifyContent: 'space-between',
+		paddingLeft: 8,
+		paddingRight: 5,
+	},
+	coinBackground: {
+		paddingVertical: 20,
+		paddingHorizontal:8,
+		flex: 1,
+		backgroundColor: 'black',
+		opacity: 0.7,
+		borderRadius: 5
+	},
+	coinLogo: {
+		// position: "absolute",
+		// flex: 3,
+		height: 30,
+		width: 30,
+	},
+	coinCount: {
+		// flex: 2,
+		// position: "absolute",
+		color: 'white',
+		fontFamily: 'Bomb',
+		fontSize: 30,
+	},
+	scoreBackground: {
+		paddingVertical: 20,
+		paddingHorizontal:8,
+		flex: 1,
+		backgroundColor: 'black',
+		opacity: 0.7,
+		borderRadius: 5
+	},
+	scoreContent:{
+		width: 200,
+		// flex: 1,
+		flexDirection: "row",
+		position: "absolute",
+		justifyContent: 'space-between',
+		paddingLeft: 8,
+		paddingRight: 5,
+	},
+	scoreContainer:{
+		height: 30,
+		width: 200,
+		alignItems:	"center",
+		flexDirection: "row",
 	}
 });

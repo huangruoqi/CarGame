@@ -7,7 +7,8 @@ export default class Cone {
 		scene.add(this.obj);
 		this.width = 0.2;
 		this.length = 0.2;
-		this.score = -200;
+		this.score = 0;
+		this.coin = -5;
 	}
 
 	update(dt) {

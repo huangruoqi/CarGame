@@ -76,21 +76,27 @@ export default function App() {
 
 		function solve_collision(object) {
 			game.score += object.score;
+			game.coin += object.coin;
 			game.score = Math.max(game.score, 0);
+			game.coin = Math.max(game.coin, 0);
 			switch (object.name) {
 				case 'coin': 
 					animate.current('score', {total: game.score, diff: object.score})
+					animate.current('coin', {total: game.coin, diff: object.coin})
 					break;
 				case 'cone': 
 					new Sound().play('crash');
 					animate.current('score', {total: game.score, diff: object.score})
+					animate.current('coin', {total: game.coin, diff: object.coin})
 					break;
 			}
 		}
 
     function update(dt) {
 			if (!game.isPaused) {
-				game.update(dt);	
+				game.update(dt);
+				game.score+=Math.floor(dt*100);
+				animate.current("score", {total: game.score, diff: 0})	
 			}
 			game.setCarPosition(carX.value * 1.6);
 			game.setCarRotation(carR.value * Math.PI / 9);
