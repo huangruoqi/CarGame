@@ -23,7 +23,7 @@ export default class Road {
 		this.roads.forEach(obj => {
 			obj.position.z += 8 * speed * dt
 			if (obj.position.z > 12)
-				obj.position.z -= 35;
+				obj.position.z -= 60;
 		})
 		this.timeElapsed+=dt;
 		if (this.timeElapsed > 1.5) {

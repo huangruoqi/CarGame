@@ -14,7 +14,8 @@ import {
 import {
 	useSharedValue,
 	withTiming,
-	withSpring
+	withSpring,
+	withRepeat,
 } from 'react-native-reanimated';
 import GameContainer from './GameObjects/GameContainer.js';
 import ObjectGenerator from './GameObjects/ObjectGenerator.js';
@@ -26,7 +27,9 @@ export default function App() {
 	const [g, setG] = React.useState(null);
 	const lane = useSharedValue(0)
 	const carX = useSharedValue(0)
-	const carR = useSharedValue(0)
+	const carY = useSharedValue(1)
+	const carRY = useSharedValue(0)
+	const carRX = useSharedValue(0)
 	const clock = new Clock();
 	const animate = React.useRef(null);
 
@@ -42,7 +45,7 @@ export default function App() {
 		// renderer.shadowMap.enabled = true;
 		renderer.shadowMap.type = PCFSoftShadowMap;
     const camera = new PerspectiveCamera(70, width / height, 0.01, 1000);
-    camera.position.set(0, 6,6);
+    camera.position.set(0, 6, 7);
     camera.lookAt(0,0,0);
     const scene = new Scene();
 
@@ -74,6 +77,8 @@ export default function App() {
 		const game = new GameContainer(scene, new ObjectGenerator(), solve_collision)
 		setG(game)
 
+
+
 		function solve_collision(object) {
 			game.score += object.score;
 			game.score = Math.max(game.score, 0);
@@ -84,6 +89,12 @@ export default function App() {
 				case 'cone': 
 					new Sound().play('crash');
 					animate.current('score', {total: game.score, diff: object.score})
+					game.car.isShaking = true;
+					carY.value = withTiming(1.4, {duration: 300}, () => carY.value = withTiming(1, {duration: 300}))
+					carRY.value = withTiming(0.1, {duration: 100}, () => carRY.value = withRepeat(withTiming(-0.1, {duration: 200}), 2, true, () => carRY.value = withSpring(0)))
+					carRX.value = withTiming(0.7, {duration: 150}, () => carRX.value = withRepeat(withTiming(-0.7, {duration: 300}), 2, true, () => carRX.value = withSpring(0)))
+					setTimeout(() => game.car.isShaking = false, 600);
+
 					break;
 			}
 		}
@@ -92,8 +103,8 @@ export default function App() {
 			if (!game.isPaused) {
 				game.update(dt);	
 			}
-			game.setCarPosition(carX.value * 1.6);
-			game.setCarRotation(carR.value * Math.PI / 9);
+			game.setCarPosition(carX.value * 1.6, carY.value);
+			game.setCarRotation(carRX.value * Math.PI / 18, carRY.value * Math.PI / 9);
     }
 
     // Setup an animation loop
@@ -115,13 +126,15 @@ export default function App() {
 			onPressIn={(e) => {pressX.value = e.nativeEvent.pageX}}
 			onPressOut={(e) => {
 				if (e.nativeEvent.pageX<pressX.value&&lane.value>-1) {
+					if (g && g.car.isShaking) return;
 					carX.value = withSpring(lane.value - 1)
-					carR.value = withTiming(1, {duration:200}, () => carR.value = withTiming(0, {duration:200}))
+					carRY.value = withTiming(1, {duration:200}, () => carRY.value = withTiming(0, {duration:200}))
 					lane.value = lane.value - 1;
 				}
 				else if (e.nativeEvent.pageX>pressX.value&&lane.value<1){
+					if (g && g.car.isShaking) return;
 					carX.value = withSpring(lane.value + 1)
-					carR.value = withTiming(-1, {duration:200}, () => carR.value = withTiming(0, {duration:200}))
+					carRY.value = withTiming(-1, {duration:200}, () => carRY.value = withTiming(0, {duration:200}))
 					lane.value = lane.value + 1;
 				}
 			}}

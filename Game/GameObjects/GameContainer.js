@@ -60,6 +60,16 @@ export default class GameContainer {
 		return Math.floor(Math.pow(x/1.5, 0.3))+1;
 	}
 
-	setCarPosition(x) { if (this.car) this.car.obj.position.x = x; }
-	setCarRotation(y) { if (this.car) this.car.obj.rotation.y = y; }
+	setCarPosition(x, y) { 
+		if (this.car) {
+			this.car.obj.position.x = x;
+			this.car.obj.position.y = y;
+		}
+	}
+	setCarRotation(x, y) {
+		if (this.car) {
+			this.car.obj.rotation.x = x;
+			this.car.obj.rotation.y = y; 
+		}
+	}
 }

@@ -12,8 +12,9 @@ const object_list = [
 ]
 
 export default class ObjectGenerator {
-	constructor() {
+	constructor(scene) {
 		this.table = {};
+		this.scene = scene;
 		this.isLoaded = false;
 	}
 
